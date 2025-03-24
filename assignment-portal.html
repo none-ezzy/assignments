@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abbos Muminov - Assignments</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        header {
+            background-color: #1a5276;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .profile {
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2e86c1;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #1a5276;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #1a5276;
+            color: white;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        #assignments {
+            list-style-type: none;
+            padding: 0;
+        }
+        #assignments li {
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border-left: 4px solid #2e86c1;
+        }
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .success-message {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: none;
+        }
+        .upload-section, .view-section {
+            padding: 10px;
+        }
+        .week-assignments {
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .week-assignments h2 {
+            color: #1a5276;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Abbos Muminov</h1>
+        <p>Assignment Portal</p>
+    </header>
+
+    <section class="profile">
+        <h2>Student Information</h2>
+        <p>Student ID: 2417434<br>
+        Dong-A University<br>
+        Integrated Business Management</p>
+    </section>
+
+    <div class="week-assignments">
+        <h2>Course Assignments</h2>
+        <a href="week3.html" class="button">Week 3 - Command Line Dungeon Adventure</a>
+    </div>
+
+    <div class="card">
+        <div class="upload-section">
+            <h2>Upload Assignment</h2>
+            <input type="text" id="assignmentName" placeholder="Assignment Name" required>
+            <input type="file" id="assignmentFile" required>
+            <button class="button" id="uploadBtn">Upload</button>
+            <div id="successMessage" class="success-message">Assignment uploaded successfully!</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="view-section">
+            <h2>My Assignments</h2>
+            <ul id="assignments"></ul>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Abbos Muminov - Dong-A University
+    </footer>
+
+    <script>
+        // This script uses GitHub Gist API to store assignment links
+        // For this to work, we'll save data to localStorage and also generate sharable URLs
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load assignments from localStorage
+            displayAssignments();
+            
+            // Handle upload button click
+            document.getElementById('uploadBtn').addEventListener('click', uploadAssignment);
+            
+            function uploadAssignment() {
+                const name = document.getElementById('assignmentName').value;
+                const fileInput = document.getElementById('assignmentFile');
+                
+                if (!name || !fileInput.files.length) {
+                    alert('Please enter an assignment name and select a file.');
+                    return;
+                }
+                
+                const file = fileInput.files[0];
+                
+                // Create assignment object
+                const assignmentId = Date.now().toString();
+                const assignment = {
+                    id: assignmentId,
+                    name: name,
+                    fileName: file.name,
+                    date: new Date().toLocaleDateString(),
+                    // Create a shareable URL that includes assignment details in hash parameters
+                    // This will make it accessible on any device that visits this page
+                    shareUrl: `${window.location.origin}${window.location.pathname}#assignment=${assignmentId}&name=${encodeURIComponent(name)}&file=${encodeURIComponent(file.name)}`
+                };
+                
+                // We'll use localStorage to save assignments
+                let assignments = JSON.parse(localStorage.getItem('gh-assignments') || '[]');
+                assignments.push(assignment);
+                localStorage.setItem('gh-assignments', JSON.stringify(assignments));
+                
+                // Use FileReader to convert file to data URL (this makes it shareable)
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Store the file content in localStorage (with a size limit - GitHub Pages has limits)
+                    // In production, you'd use a proper file storage service
+                    try {
+                        localStorage.setItem(`file-${assignmentId}`, e.target.result);
+                        
+                        // Show success message
+                        const successMsg = document.getElementById('successMessage');
+                        successMsg.style.display = 'block';
+                        setTimeout(() => {
+                            successMsg.style.display = 'none';
+                        }, 3000);
+                        
+                        // Clear form
+                        document.getElementById('assignmentName').value = '';
+                        document.getElementById('assignmentFile').value = '';
+                        
+                        // Update the display
+                        displayAssignments();
+                    } catch (err) {
+                        // Handle localStorage quota exceeded
+                        alert('Error: File too large to store. Please use a smaller file.');
+                        console.error('Storage error:', err);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            function displayAssignments() {
+                const list = document.getElementById('assignments');
+                list.innerHTML = '';
+                
+                // Check for assignments in hash parameters (shared link)
+                const hash = window.location.hash;
+                if (hash && hash.includes('assignment=')) {
+                    const params = new URLSearchParams(hash.substring(1));
+                    const id = params.get('assignment');
+                    const name = params.get('name');
+                    const fileName = params.get('file');
+                    
+                    if (id && name) {
+                        // Create a special list item for the shared assignment
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <h3>Shared Assignment: ${name}</h3>
+                            <p>File: ${fileName || 'Unknown'}</p>
+                            <button class="button" id="viewBtn-${id}">View/Download</button>
+                        `;
+                        list.appendChild(li);
+                        
+                        document.getElementById(`viewBtn-${id}`).addEventListener('click', function() {
+                            const fileData = localStorage.getItem(`file-${id}`);
+                            if (fileData) {
+                                // Create a download link for the file
+                                const a = document.createElement('a');
+                                a.href = fileData;
+                                a.download = fileName || 'downloaded-file';
+                                a.click();
+                            } else {
+                                alert('File not available. It may have been uploaded on another device.');
+                            }
+                        });
+                    }
+                }
+                
+                // Display all locally stored assignments
+                const assignments = JSON.parse(localStorage.getItem('gh-assignments') || '[]');
+                
+                if (assignments.length === 0 && !hash.includes('assignment=')) {
+                    list.innerHTML = '<p>No assignments uploaded yet.</p>';
+                    return;
+                }
+                
+                assignments.forEach(assignment => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <h3>${assignment.name}</h3>
+                        <p>File: ${assignment.fileName}</p>
+                        <p>Date: ${assignment.date}</p>
+                        <div>
+                            <button class="button view-btn" id="view-${assignment.id}">View/Download</button>
+                            <button class="button share-btn" id="share-${assignment.id}">Share Link</button>
+                        </div>
+                    `;
+                    list.appendChild(li);
+                    
+                    // Add event listeners
+                    document.getElementById(`view-${assignment.id}`).addEventListener('click', function() {
+                        const fileData = localStorage.getItem(`file-${assignment.id}`);
+                        if (fileData) {
+                            const a = document.createElement('a');
+                            a.href = fileData;
+                            a.download = assignment.fileName;
+                            a.click();
+                        } else {
+                            alert('File data not found.');
+                        }
+                    });
+                    
+                    document.getElementById(`share-${assignment.id}`).addEventListener('click', function() {
+                        navigator.clipboard.writeText(assignment.shareUrl)
+                            .then(() => alert('Link copied to clipboard! Share it with anyone.'))
+                            .catch(err => console.error('Failed to copy link: ', err));
+                    });
+                });
+            }
+            
+            // Check for shared assignments when page loads
+            window.addEventListener('hashchange', displayAssignments);
+        });
+    </script>
+</body>
+</html>
