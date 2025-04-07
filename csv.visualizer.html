@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Visualizer - Week 4 Assignment</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --accent-color: #4fc3a1;
+            --background-color: #f8f9fa;
+            --text-color: #333;
+            --light-gray: #e9ecef;
+            --medium-gray: #dee2e6;
+            --dark-gray: #adb5bd;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            margin-bottom: 10px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .visualization-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .diagram {
+            position: relative;
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            padding: 20px;
+        }
+        
+        .csv-box {
+            background-color: white;
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            padding: 15px;
+            width: 22%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .csv-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .csv-box h3 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            text-align: center;
+            border-bottom: 1px solid var(--medium-gray);
+            padding-bottom: 8px;
+        }
+        
+        .connection-line {
+            position: absolute;
+            background-color: var(--accent-color);
+            height: 3px;
+            transform-origin: left center;
+            z-index: -1;
+        }
+        
+        .connection-arrow {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            z-index: -1;
+        }
+        
+        .table-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            width: 100%;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+        
+        .table-container.active {
+            max-height: 400px;
+            margin-bottom: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: var(--light-gray);
+        }
+        
+        tr:hover {
+            background-color: var(--medium-gray);
+        }
+        
+        .highlight {
+            background-color: rgba(79, 195, 161, 0.3) !important;
+        }
+        
+        .connection-info {
+            text-align: center;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin: 20px 0;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        .connection-label {
+            position: absolute;
+            background-color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid var(--accent-color);
+            font-size: 12px;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CSV Data Visualizer</h1>
+            <p>Explore the relationships between different CSV datasets in the library management system</p>
+        </header>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #4fc3a1;"></div>
+                <span>Direct Relationship</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: rgba(79, 195, 161, 0.3);"></div>
+                <span>Highlighted Data</span>
+            </div>
+        </div>
+        
+        <div class="button-container">
+            <button id="show-all-btn">Show All Tables</button>
+            <button id="hide-all-btn">Hide All Tables</button>
+            <button id="show-connections-btn">Show Connections</button>
+        </div>
+        
+        <div class="connection-info" id="connection-info">
+            Click on any CSV box to view its data. Click "Show Connections" to visualize relationships.
+        </div>
+        
+        <div class="visualization-container">
+            <div class="diagram" id="diagram">
+                <div class="csv-box" id="books-box">
+                    <h3>Books.csv</h3>
+                    <p>Contains book information including title, author ID, and genre ID.</p>
+                    <p><strong>Rows:</strong> 10</p>
+                    <p><strong>Columns:</strong> 3</p>
+                </div>
+                
+                <div class="csv-box" id="authors-box">
+                    <h3>Authors.csv</h3>
+                    <p>Information about authors, including ID, name, and nationality.</p>
+                    <p><strong>Rows:</strong> 10</p>
+                    <p><strong>Columns:</strong> 3</p>
+                </div>
+                
+                <div class="csv-box" id="genres-box">
+                    <h3>Genres.csv</h3>
+                    <p>Book genres with descriptions and book count.</p>
+                    <p><strong>Rows:</strong> 4</p>
+                    <p><strong>Columns:</strong> 4</p>
+                </div>
+                
+                <div class="csv-box" id="customers-box">
+                    <h3>Customers.csv</h3>
+                    <p>Customer information including favorite books and purchase dates.</p>
+                    <p><strong>Rows:</strong> 8</p>
+                    <p><strong>Columns:</strong> 5</p>
+                </div>
+            </div>
+            
+            <div class="table-container" id="books-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author ID</th>
+                            <th>Genre ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>To Kill a Mockingbird</td>
+                            <td>1</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>1984</td>
+                            <td>2</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Pride and Prejudice</td>
+                            <td>3</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>The Great Gatsby</td>
+                            <td>4</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>Brave New World</td>
+                            <td>5</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>The Catcher in the Rye</td>
+                            <td>6</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>The Hobbit</td>
+                            <td>7</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>The Lord of the Rings</td>
+                            <td>8</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>Fahrenheit 451</td>
+                            <td>9</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Jane Eyre</td>
+                            <td>10</td>
+                            <td>2</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="table-container" id="authors-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Author ID</th>
+                            <th>Name</th>
+                            <th>Nationality</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Harper Lee</td>
+                            <td>American</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>George Orwell</td>
+                            <td>British</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Jane Austen</td>
+                            <td>British</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>F. Scott Fitzgerald</td>
+                            <td>American</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Aldous Huxley</td>
+                            <td>British</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>J.D. Salinger</td>
+                            <td>American</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>J.R.R. Tolkien</td>
+                            <td>British</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>J.R.R. Tolkien</td>
+                            <td>British</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>Ray Bradbury</td>
+                            <td>American</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>Charlotte Brontë</td>
+                            <td>British</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="table-container" id="genres-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Genre ID</th>
+                            <th>Genre Name</th>
+                            <th>Description</th>
+                            <th>Book Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Science Fiction</td>
+                            <td>Futuristic and technological themes</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Classic Literature</td>
+                            <td>Timeless works of literary importance</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Coming of Age</td>
+                            <td>Stories about personal growth and development</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Fantasy</td>
+                            <td>Magical worlds and mythical creatures</td>
+                            <td>2</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="table-container" id="customers-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Customer ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Favorite Book</th>
+                            <th>Purchase Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>C001</td>
+                            <td>John Smith</td>
+                            <td>john@example.com</td>
+                            <td>1984</td>
+                            <td>2023-05-12</td>
+                        </tr>
+                        <tr>
+                            <td>C002</td>
+                            <td>Emma Wilson</td>
+                            <td>emma@example.com</td>
+                            <td>Pride and Prejudice</td>
+                            <td>2023-06-02</td>
+                        </tr>
+                        <tr>
+                            <td>C003</td>
+                            <td>Michael Brown</td>
+                            <td>michael@example.com</td>
+                            <td>The Hobbit</td>
+                            <td>2023-04-18</td>
+                        </tr>
+                        <tr>
+                            <td>C004</td>
+                            <td>Sarah Johnson</td>
+                            <td>sarah@example.com</td>
+                            <td>To Kill a Mockingbird</td>
+                            <td>2023-07-22</td>
+                        </tr>
+                        <tr>
+                            <td>C005</td>
+                            <td>David Lee</td>
+                            <td>david@example.com</td>
+                            <td>Brave New World</td>
+                            <td>2023-05-30</td>
+                        </tr>
+                        <tr>
+                            <td>C006</td>
+                            <td>Lisa Garcia</td>
+                            <td>lisa@example.com</td>
+                            <td>Jane Eyre</td>
+                            <td>2023-06-15</td>
+                        </tr>
+                        <tr>
+                            <td>C007</td>
+                            <td>James Wilson</td>
+                            <td>james@example.com</td>
+                            <td>The Great Gatsby</td>
+                            <td>2023-04-05</td>
+                        </tr>
+                        <tr>
+                            <td>C008</td>
+                            <td>Emily Davis</td>
+                            <td>emily@example.com</td>
+                            <td>Fahrenheit 451</td>
+                            <td>2023-08-03</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <footer>
+            <p>CSV Visualizer - Week 4 Assignment | Created by Student Name | 2025</p>
+            <p><a href="index.html">Back to Assignment Portal</a></p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get references to elements
+            const booksBox = document.getElementById('books-box');
+            const authorsBox = document.getElementById('authors-box');
+            const genresBox = document.getElementById('genres-box');
+            const customersBox = document.getElementById('customers-box');
+            
+            const booksTable = document.getElementById('books-table');
+            const authorsTable = document.getElementById('authors-table');
+            const genresTable = document.getElementById('genres-table');
+            const customersTable = document.getElementById('customers-table');
+            
+            const diagram = document.getElementById('diagram');
+            const showAllBtn = document.getElementById('show-all-btn');
+            const hideAllBtn = document.getElementById('hide-all-btn');
+            const showConnectionsBtn = document.getElementById('show-connections-btn');
+            const connectionInfo = document.getElementById('connection-info');
+            
+            // Toggle tables visibility
+            function toggleTable(table) {
+                table.classList.toggle('active');
+            }
+            
+            // Event listeners for boxes
+            booksBox.addEventListener('click', () => toggleTable(booksTable));
+            authorsBox.addEventListener('click', () => toggleTable(authorsTable));
+            genresBox.addEventListener('click', () => toggleTable(genresTable));
+            customersBox.addEventListener('click', () => toggleTable(customersTable));
+            
+            // Show all tables
+            showAllBtn.addEventListener('click', () => {
+                booksTable.classList.add('active');
+                authorsTable.classList.add('active');
+                genresTable.classList.add('active');
+                customersTable.classList.add('active');
+            });
+            
+            // Hide all tables
+            hideAllBtn.addEventListener('click', () => {
+                booksTable.classList.remove('active');
+                authorsTable.classList.remove('active');
+                genresTable.classList.remove('active');
+                customersTable.classList.remove('active');
+                
+                // Remove all connection lines and labels
+                document.querySelectorAll('.connection-line, .connection-arrow, .connection-label').forEach(el => el.remove());
+                
+                // Reset highlights
+                document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+                
+                connectionInfo.textContent = 'Click on any CSV box to view its data. Click "Show Connections" to visualize relationships.';
+            });
+            
+            // Create a connection line between two elements
+            function createConnection(fromEl, toEl, label) {
+                // Get element positions
+                const fromRect = fromEl.getBoundingClientRect();
+                const toRect = toEl.getBoundingClientRect();
+                const diagramRect = diagram.getBoundingClientRect();
+                
+                // Calculate positions relative to the diagram
+                const fromX = fromRect.left + fromRect.width / 2 - diagramRect.left;
+                const fromY = fromRect.top + fromRect.height / 2 - diagramRect.top;
+                const toX = toRect.left + toRect.width / 2 - diagramRect.left;
+                const toY = toRect.top + toRect.height / 2 - diagramRect.top;
+                
+                // Calculate distance and angle
+                const dx = toX - fromX;
+                const dy = toY - fromY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                
+                // Create line
+                const line = document.createElement('div');
+                line.className = 'connection-line';
+                line.style.width = `${distance}px`;
+                line.style.left = `${fromX}px`;
+                line.style.top = `${fromY}px`;
+                line.style.transform = `rotate(${angle}deg)`;
+                
+                // Create arrow
+                const arrow = document.createElement('div');
+                arrow.className = 'connection-arrow';
+                arrow.style.left = `${toX - 5}px`;
+                arrow.style.top = `${toY - 5}px`;
+                arrow.style.borderWidth = '5px 0 5px 10px';
+                arrow.style.borderColor = 'transparent transparent transparent #4fc3a1';
+                arrow.style.transform = `rotate(${angle}deg)`;
+                
+                // Create label
+                const labelEl = document.createElement('div');
+                labelEl.className = 'connection-label';
+                labelEl.textContent = label;
+                labelEl.style.left = `${(fromX + toX) / 2 - 60}px`;
+                labelEl.style.top = `${(fromY + toY) / 2 - 15}px`;
+                
+                // Add elements to diagram
+                diagram.appendChild(line);
+                diagram.appendChild(arrow);
+                diagram.appendChild(labelEl);
+            }
+            
+            // Show connections between CSV data
+            showConnectionsBtn.addEventListener('click', () => {
+                // Remove existing connections
+                document.querySelectorAll('.connection-line, .connection-arrow, .connection-label').forEach(el => el.remove());
+                
+                // Create connections
+                createConnection(booksBox, authorsBox, 'author_id connects');
+                createConnection(booksBox, genresBox, 'genre_id connects');
+                createConnection(customersBox, booksBox, 'favorite_book connects');
+                
+                // Show all tables
+                booksTable.classList.add('active');
+                authorsTable.classList.add('active');
+                genresTable.classList.add('active');
+                customersTable.classList.add('active');
+                
+                // Update info text
+                connectionInfo.textContent = 'Connections shown! Hover over tables to see related data highlighted.';
+                
+                // Add event listeners for highlighting related data
+                const bookRows = booksTable.querySelectorAll('tbody tr');
+                const authorRows = authorsTable.querySelectorAll('tbody tr');
+                const genreRows = genresTable.querySelectorAll('tbody tr');
+                const customerRows = customersTable.querySelectorAll('tbody tr');
+                
+                // Highlight related rows when hovering over book rows
+                bookRows.forEach(row => {
+                    row.addEventListener('mouseenter', () => {
+                        const authorId = row.cells[1].textContent;
+                        const genreId = row.cells[2].textContent;
+                        const bookTitle = row.cells[0].textContent;
+                        
+                        // Highlight this row
+                        row.classList.add('highlight');
+                        
+                        // Highlight related author
+                        authorRows.forEach(authorRow => {
+                            if (authorRow.cells[0].textContent === authorId) {
+                                authorRow.classList.add('highlight');
+                            }
+                        });
+                        
+                        // Highlight related genre
+                        genreRows.forEach(genreRow => {
+                            if (genreRow.cells[0].textContent === genreId) {
+                                genreRow.classList.add('highlight');
+                            }
+                        });
+                        
+                        // Highlight related customers
+                        customerRows.forEach(customerRow => {
+                            if (customerRow.cells[3].textContent === bookTitle) {
+                                customerRow.classList.add('highlight');
+                            }
+                        });
+                    });
+                    
+                    row.addEventListener('mouseleave', () => {
+                        document.querySelectorAll('.highlight').forEach(el => {
+                            el.classList.remove('highlight');
+                        });
+                    });
+                });
+                
+                // Add similar event listeners for other tables
+                authorRows.forEach(row => {
+                    row.addEventListener('mouseenter', () => {
+                        const authorId = row.cells[0].textContent;
+                        
+                        // Highlight this row
+                        row.classList.add('highlight');
+                        
+                        // Highlight related books
+                        bookRows.forEach(bookRow => {
+                            if (bookRow.cells[1].textContent === authorId) {
+                                bookRow.classList.add('highlight');
+                                
+                                // Also highlight related genres and customers
+                                const genreId = bookRow.cells[2].textContent;
+                                const bookTitle = bookRow.cells[0].textContent;
+                                
+                                genreRows.forEach(genreRow => {
+                                    if (genreRow.cells[0].textContent === genreId) {
+                                        genreRow.classList.add('highlight');
+                                    }
+                                });
+                                
+                                customerRows.forEach(customerRow => {
+                                    if (customerRow.cells[3].textContent === bookTitle) {
+                                        customerRow.classList.add('highlight');
+                                    }
+                                });
+                            }
+                        });
+                    });
+                    
+                    row.addEventListener('mouseleave', () => {
+                        document.querySelectorAll('.highlight').forEach(el => {
+                            el.classList.remove('highlight');
+                        });
+                    });
+                });
+                
+                // Similar for genre rows
+                genreRows.forEach(row => {
+                    row.addEventListener('mouseenter', () => {
+                        const genreId = row.cells[0].textContent;
+                        
+                        // Highlight this row
+                        row.classList.add('highlight');
+                        
+                        // Highlight related books
+                        bookRows.forEach(bookRow => {
+                            if (bookRow.cells[2].textContent === genreId) {
+                                bookRow.classList.add('highlight');
+                                
+                                // Also highlight related authors and customers
+                                const authorId = bookRow.cells[1].textContent;
+                                const bookTitle = bookRow.cells[0].textContent;
+                                
+                                authorRows.forEach(authorRow => {
+                                    if (authorRow.cells[0].textContent === authorId) {
+                                        authorRow.classList.add('highlight');
+                                    }
+                                });
+                                
+                                customerRows.forEach(customerRow => {
+                                    if (customerRow.cells[3].textContent === bookTitle) {
+                                        customerRow.classList.add('highlight');
+                                    }
+                                });
+                            }
+                        });
+                    });
+                    
+                    row.addEventListener('mouseleave', () => {
+                        document.querySelectorAll('.highlight').forEach(el => {
+                            el.classList.remove('highlight');
+                        });
+                    });
+                });
+                
+                // Customer rows
+                customerRows.forEach(row => {
+                    row.addEventListener('mouseenter', () => {
+                        const favoriteBook = row.cells[3].textContent;
+                        
+                        // Highlight this row
+                        row.classList.add('highlight');
+                        
+                        // Highlight related book
+                        bookRows.forEach(bookRow => {
+                            if (bookRow.cells[0].textContent === favoriteBook) {
+                                bookRow.classList.add('highlight');
+                                
+                                // Also highlight related authors and genres
+                                const authorId = bookRow.cells[1].textContent;
+                                const genreId = bookRow.cells[2].textContent;
+                                
+                                authorRows.forEach(authorRow => {
+                                    if (authorRow.cells[0].textContent === authorId)
