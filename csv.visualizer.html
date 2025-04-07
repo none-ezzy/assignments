@@ -535,8 +535,9 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Get references to elements
+        // Ensure the DOM is fully loaded before attaching event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get references to all needed elements
             const booksBox = document.getElementById('books-box');
             const authorsBox = document.getElementById('authors-box');
             const genresBox = document.getElementById('genres-box');
@@ -553,49 +554,66 @@
             const showConnectionsBtn = document.getElementById('show-connections-btn');
             const connectionInfo = document.getElementById('connection-info');
             
-            // Toggle tables visibility
+            // Function to toggle tables visibility
             function toggleTable(table) {
                 table.classList.toggle('active');
             }
             
-            // Event listeners for boxes
-            booksBox.addEventListener('click', () => toggleTable(booksTable));
-            authorsBox.addEventListener('click', () => toggleTable(authorsTable));
-            genresBox.addEventListener('click', () => toggleTable(genresTable));
-            customersBox.addEventListener('click', () => toggleTable(customersTable));
+            // Direct event listeners for boxes
+            booksBox.onclick = function() {
+                toggleTable(booksTable);
+            };
             
-            // Show all tables
-            showAllBtn.addEventListener('click', () => {
+            authorsBox.onclick = function() {
+                toggleTable(authorsTable);
+            };
+            
+            genresBox.onclick = function() {
+                toggleTable(genresTable);
+            };
+            
+            customersBox.onclick = function() {
+                toggleTable(customersTable);
+            };
+            
+            // Show all tables button
+            showAllBtn.onclick = function() {
                 booksTable.classList.add('active');
                 authorsTable.classList.add('active');
                 genresTable.classList.add('active');
                 customersTable.classList.add('active');
-            });
+            };
             
-            // Hide all tables
-            hideAllBtn.addEventListener('click', () => {
+            // Hide all tables button
+            hideAllBtn.onclick = function() {
                 booksTable.classList.remove('active');
                 authorsTable.classList.remove('active');
                 genresTable.classList.remove('active');
                 customersTable.classList.remove('active');
                 
-                // Remove all connection lines and labels
-                document.querySelectorAll('.connection-line, .connection-arrow, .connection-label').forEach(el => el.remove());
+                // Remove connection elements
+                const connections = document.querySelectorAll('.connection-line, .connection-arrow, .connection-label');
+                for (let i = 0; i < connections.length; i++) {
+                    connections[i].remove();
+                }
                 
-                // Reset highlights
-                document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+                // Remove highlights
+                const highlights = document.querySelectorAll('.highlight');
+                for (let i = 0; i < highlights.length; i++) {
+                    highlights[i].classList.remove('highlight');
+                }
                 
                 connectionInfo.textContent = 'Click on any CSV box to view its data. Click "Show Connections" to visualize relationships.';
-            });
+            };
             
-            // Create a connection line between two elements
+            // Function to create connection lines
             function createConnection(fromEl, toEl, label) {
-                // Get element positions
+                // Get positions
                 const fromRect = fromEl.getBoundingClientRect();
                 const toRect = toEl.getBoundingClientRect();
                 const diagramRect = diagram.getBoundingClientRect();
                 
-                // Calculate positions relative to the diagram
+                // Calculate positions relative to diagram
                 const fromX = fromRect.left + fromRect.width / 2 - diagramRect.left;
                 const fromY = fromRect.top + fromRect.height / 2 - diagramRect.top;
                 const toX = toRect.left + toRect.width / 2 - diagramRect.left;
@@ -607,29 +625,29 @@
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 const angle = Math.atan2(dy, dx) * 180 / Math.PI;
                 
-                // Create line
+                // Create line element
                 const line = document.createElement('div');
                 line.className = 'connection-line';
-                line.style.width = `${distance}px`;
-                line.style.left = `${fromX}px`;
-                line.style.top = `${fromY}px`;
-                line.style.transform = `rotate(${angle}deg)`;
+                line.style.width = distance + 'px';
+                line.style.left = fromX + 'px';
+                line.style.top = fromY + 'px';
+                line.style.transform = 'rotate(' + angle + 'deg)';
                 
-                // Create arrow
+                // Create arrow element
                 const arrow = document.createElement('div');
                 arrow.className = 'connection-arrow';
-                arrow.style.left = `${toX - 5}px`;
-                arrow.style.top = `${toY - 5}px`;
+                arrow.style.left = (toX - 5) + 'px';
+                arrow.style.top = (toY - 5) + 'px';
                 arrow.style.borderWidth = '5px 0 5px 10px';
                 arrow.style.borderColor = 'transparent transparent transparent #4fc3a1';
-                arrow.style.transform = `rotate(${angle}deg)`;
+                arrow.style.transform = 'rotate(' + angle + 'deg)';
                 
-                // Create label
+                // Create label element
                 const labelEl = document.createElement('div');
                 labelEl.className = 'connection-label';
                 labelEl.textContent = label;
-                labelEl.style.left = `${(fromX + toX) / 2 - 60}px`;
-                labelEl.style.top = `${(fromY + toY) / 2 - 15}px`;
+                labelEl.style.left = ((fromX + toX) / 2 - 60) + 'px';
+                labelEl.style.top = ((fromY + toY) / 2 - 15) + 'px';
                 
                 // Add elements to diagram
                 diagram.appendChild(line);
@@ -637,12 +655,15 @@
                 diagram.appendChild(labelEl);
             }
             
-            // Show connections between CSV data
-            showConnectionsBtn.addEventListener('click', () => {
-                // Remove existing connections
-                document.querySelectorAll('.connection-line, .connection-arrow, .connection-label').forEach(el => el.remove());
+            // Show connections button
+            showConnectionsBtn.onclick = function() {
+                // Clear existing connections
+                const connections = document.querySelectorAll('.connection-line, .connection-arrow, .connection-label');
+                for (let i = 0; i < connections.length; i++) {
+                    connections[i].remove();
+                }
                 
-                // Create connections
+                // Create new connections
                 createConnection(booksBox, authorsBox, 'author_id connects');
                 createConnection(booksBox, genresBox, 'genre_id connects');
                 createConnection(customersBox, booksBox, 'favorite_book connects');
@@ -656,145 +677,171 @@
                 // Update info text
                 connectionInfo.textContent = 'Connections shown! Hover over tables to see related data highlighted.';
                 
-                // Add event listeners for highlighting related data
+                // Get all row elements
                 const bookRows = booksTable.querySelectorAll('tbody tr');
                 const authorRows = authorsTable.querySelectorAll('tbody tr');
                 const genreRows = genresTable.querySelectorAll('tbody tr');
                 const customerRows = customersTable.querySelectorAll('tbody tr');
                 
-                // Highlight related rows when hovering over book rows
-                bookRows.forEach(row => {
-                    row.addEventListener('mouseenter', () => {
-                        const authorId = row.cells[1].textContent;
-                        const genreId = row.cells[2].textContent;
-                        const bookTitle = row.cells[0].textContent;
+                // Add event listeners for book rows
+                for (let i = 0; i < bookRows.length; i++) {
+                    bookRows[i].onmouseenter = function() {
+                        const authorId = this.cells[1].textContent;
+                        const genreId = this.cells[2].textContent;
+                        const bookTitle = this.cells[0].textContent;
                         
                         // Highlight this row
-                        row.classList.add('highlight');
+                        this.classList.add('highlight');
                         
                         // Highlight related author
-                        authorRows.forEach(authorRow => {
-                            if (authorRow.cells[0].textContent === authorId) {
-                                authorRow.classList.add('highlight');
+                        for (let j = 0; j < authorRows.length; j++) {
+                            if (authorRows[j].cells[0].textContent === authorId) {
+                                authorRows[j].classList.add('highlight');
                             }
-                        });
+                        }
                         
                         // Highlight related genre
-                        genreRows.forEach(genreRow => {
-                            if (genreRow.cells[0].textContent === genreId) {
-                                genreRow.classList.add('highlight');
+                        for (let j = 0; j < genreRows.length; j++) {
+                            if (genreRows[j].cells[0].textContent === genreId) {
+                                genreRows[j].classList.add('highlight');
                             }
-                        });
+                        }
                         
                         // Highlight related customers
-                        customerRows.forEach(customerRow => {
-                            if (customerRow.cells[3].textContent === bookTitle) {
-                                customerRow.classList.add('highlight');
+                        for (let j = 0; j < customerRows.length; j++) {
+                            if (customerRows[j].cells[3].textContent === bookTitle) {
+                                customerRows[j].classList.add('highlight');
                             }
-                        });
-                    });
+                        }
+                    };
                     
-                    row.addEventListener('mouseleave', () => {
-                        document.querySelectorAll('.highlight').forEach(el => {
-                            el.classList.remove('highlight');
-                        });
-                    });
-                });
+                    bookRows[i].onmouseleave = function() {
+                        const highlights = document.querySelectorAll('.highlight');
+                        for (let j = 0; j < highlights.length; j++) {
+                            highlights[j].classList.remove('highlight');
+                        }
+                    };
+                }
                 
-                // Add similar event listeners for other tables
-                authorRows.forEach(row => {
-                    row.addEventListener('mouseenter', () => {
-                        const authorId = row.cells[0].textContent;
+                // Add event listeners for author rows
+                for (let i = 0; i < authorRows.length; i++) {
+                    authorRows[i].onmouseenter = function() {
+                        const authorId = this.cells[0].textContent;
                         
                         // Highlight this row
-                        row.classList.add('highlight');
+                        this.classList.add('highlight');
                         
                         // Highlight related books
-                        bookRows.forEach(bookRow => {
-                            if (bookRow.cells[1].textContent === authorId) {
-                                bookRow.classList.add('highlight');
+                        for (let j = 0; j < bookRows.length; j++) {
+                            if (bookRows[j].cells[1].textContent === authorId) {
+                                bookRows[j].classList.add('highlight');
                                 
                                 // Also highlight related genres and customers
-                                const genreId = bookRow.cells[2].textContent;
-                                const bookTitle = bookRow.cells[0].textContent;
+                                const genreId = bookRows[j].cells[2].textContent;
+                                const bookTitle = bookRows[j].cells[0].textContent;
                                 
-                                genreRows.forEach(genreRow => {
-                                    if (genreRow.cells[0].textContent === genreId) {
-                                        genreRow.classList.add('highlight');
+                                for (let k = 0; k < genreRows.length; k++) {
+                                    if (genreRows[k].cells[0].textContent === genreId) {
+                                        genreRows[k].classList.add('highlight');
                                     }
-                                });
+                                }
                                 
-                                customerRows.forEach(customerRow => {
-                                    if (customerRow.cells[3].textContent === bookTitle) {
-                                        customerRow.classList.add('highlight');
+                                for (let k = 0; k < customerRows.length; k++) {
+                                    if (customerRows[k].cells[3].textContent === bookTitle) {
+                                        customerRows[k].classList.add('highlight');
                                     }
-                                });
+                                }
                             }
-                        });
-                    });
+                        }
+                    };
                     
-                    row.addEventListener('mouseleave', () => {
-                        document.querySelectorAll('.highlight').forEach(el => {
-                            el.classList.remove('highlight');
-                        });
-                    });
-                });
+                    authorRows[i].onmouseleave = function() {
+                        const highlights = document.querySelectorAll('.highlight');
+                        for (let j = 0; j < highlights.length; j++) {
+                            highlights[j].classList.remove('highlight');
+                        }
+                    };
+                }
                 
-                // Similar for genre rows
-                genreRows.forEach(row => {
-                    row.addEventListener('mouseenter', () => {
-                        const genreId = row.cells[0].textContent;
+                // Add event listeners for genre rows
+                for (let i = 0; i < genreRows.length; i++) {
+                    genreRows[i].onmouseenter = function() {
+                        const genreId = this.cells[0].textContent;
                         
                         // Highlight this row
-                        row.classList.add('highlight');
+                        this.classList.add('highlight');
                         
                         // Highlight related books
-                        bookRows.forEach(bookRow => {
-                            if (bookRow.cells[2].textContent === genreId) {
-                                bookRow.classList.add('highlight');
+                        for (let j = 0; j < bookRows.length; j++) {
+                            if (bookRows[j].cells[2].textContent === genreId) {
+                                bookRows[j].classList.add('highlight');
                                 
                                 // Also highlight related authors and customers
-                                const authorId = bookRow.cells[1].textContent;
-                                const bookTitle = bookRow.cells[0].textContent;
+                                const authorId = bookRows[j].cells[1].textContent;
+                                const bookTitle = bookRows[j].cells[0].textContent;
                                 
-                                authorRows.forEach(authorRow => {
-                                    if (authorRow.cells[0].textContent === authorId) {
-                                        authorRow.classList.add('highlight');
+                                for (let k = 0; k < authorRows.length; k++) {
+                                    if (authorRows[k].cells[0].textContent === authorId) {
+                                        authorRows[k].classList.add('highlight');
                                     }
-                                });
+                                }
                                 
-                                customerRows.forEach(customerRow => {
-                                    if (customerRow.cells[3].textContent === bookTitle) {
-                                        customerRow.classList.add('highlight');
+                                for (let k = 0; k < customerRows.length; k++) {
+                                    if (customerRows[k].cells[3].textContent === bookTitle) {
+                                        customerRows[k].classList.add('highlight');
                                     }
-                                });
+                                }
                             }
-                        });
-                    });
+                        }
+                    };
                     
-                    row.addEventListener('mouseleave', () => {
-                        document.querySelectorAll('.highlight').forEach(el => {
-                            el.classList.remove('highlight');
-                        });
-                    });
-                });
+                    genreRows[i].onmouseleave = function() {
+                        const highlights = document.querySelectorAll('.highlight');
+                        for (let j = 0; j < highlights.length; j++) {
+                            highlights[j].classList.remove('highlight');
+                        }
+                    };
+                }
                 
-                // Customer rows
-                customerRows.forEach(row => {
-                    row.addEventListener('mouseenter', () => {
-                        const favoriteBook = row.cells[3].textContent;
+                // Add event listeners for customer rows
+                for (let i = 0; i < customerRows.length; i++) {
+                    customerRows[i].onmouseenter = function() {
+                        const favoriteBook = this.cells[3].textContent;
                         
                         // Highlight this row
-                        row.classList.add('highlight');
+                        this.classList.add('highlight');
                         
                         // Highlight related book
-                        bookRows.forEach(bookRow => {
-                            if (bookRow.cells[0].textContent === favoriteBook) {
-                                bookRow.classList.add('highlight');
+                        for (let j = 0; j < bookRows.length; j++) {
+                            if (bookRows[j].cells[0].textContent === favoriteBook) {
+                                bookRows[j].classList.add('highlight');
                                 
                                 // Also highlight related authors and genres
-                                const authorId = bookRow.cells[1].textContent;
-                                const genreId = bookRow.cells[2].textContent;
+                                const authorId = bookRows[j].cells[1].textContent;
+                                const genreId = bookRows[j].cells[2].textContent;
                                 
-                                authorRows.forEach(authorRow => {
-                                    if (authorRow.cells[0].textContent === authorId)
+                                for (let k = 0; k < authorRows.length; k++) {
+                                    if (authorRows[k].cells[0].textContent === authorId) {
+                                        authorRows[k].classList.add('highlight');
+                                    }
+                                }
+                                
+                                for (let k = 0; k < genreRows.length; k++) {
+                                    if (genreRows[k].cells[0].textContent === genreId) {
+                                        genreRows[k].classList.add('highlight');
+                                    }
+                                }
+                            }
+                        }
+                    };
+                    
+                    customerRows[i].onmouseleave = function() {
+                        const highlights = document.querySelectorAll('.highlight');
+                        for (let j = 0; j < highlights.length; j++) {
+                            highlights[j].classList.remove('highlight');
+                        }
+                    };
+                }
+            };
+        });
+    </script>
