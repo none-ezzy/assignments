@@ -79,6 +79,7 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             border-top: 3px solid #FF8C00;
             transition: transform 0.3s;
+            position: relative;
         }
         .assignment-card:hover {
             transform: translateY(-5px);
@@ -109,14 +110,99 @@
             background-color: #fff3e0;
             color: #e65100;
         }
-        .assignment-card .button {
-            width: 100%;
+        .assignment-link {
+            display: block;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
             text-align: center;
-            margin: 10px 0 0 0;
+            font-weight: bold;
+            color: #333;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .assignment-link:hover {
+            background-color: #FF8C00;
+            color: #000;
+        }
+        .assignment-link::after {
+            content: "→";
+            position: absolute;
+            right: 10px;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        .assignment-link:hover::after {
+            opacity: 1;
+            right: 15px;
+        }
+        #grades-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #FF8C00;
+            color: #000;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        #grades-display:hover {
+            transform: scale(1.05);
+        }
+        #grades-tooltip {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            width: 300px;
+            z-index: 1001;
+            display: none;
+            margin-top: 10px;
+        }
+        #grades-display:hover #grades-tooltip {
+            display: block;
+        }
+        .grade-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .grade-item:last-child {
+            border-bottom: none;
+        }
+        .grade-name {
+            font-weight: bold;
+        }
+        .grade-value {
+            color: #FF8C00;
+        }
+        .grade-percentage {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
+    <div id="grades-display">
+        Loading grades...
+        <div id="grades-tooltip">
+            <div class="grade-percentage">--%</div>
+            <div id="grades-details"></div>
+        </div>
+    </div>
+
     <header>
         <h1>Abbos Muminov</h1>
         <p>Assignment Portal</p>
@@ -137,35 +223,54 @@
                 <span class="status complete">Complete</span>
                 <h3>Week 2</h3>
                 <p>Introduction to Information Management Systems</p>
-                <a href="https://drive.google.com/drive/folders/1MauPH-Dk9ia04Dddz0aQDChNJE6kLzsB?usp=drive_link" class="button" target="_blank">View Assignment</a>
+                <div class="assignment-link" onclick="window.open('https://drive.google.com/drive/folders/1MauPH-Dk9ia04Dddz0aQDChNJE6kLzsB?usp=drive_link', '_blank')">
+                    View Assignment
+                </div>
             </div>
             
             <div class="assignment-card">
                 <span class="status complete">Complete</span>
                 <h3>Week 3</h3>
                 <p>Command Line Dungeon Adventure</p>
-                <a href="week3.html" class="button">View Assignment</a>
+                <div class="assignment-link" onclick="window.location.href='week3.html'">
+                    View Assignment
+                </div>
             </div>
             
             <div class="assignment-card">
                 <span class="status complete">Complete</span>
                 <h3>Week 4</h3>
                 <p>Virtual Library & Idea Sourcing</p>
-                <a href="csv.visualizer.html" class="button">View Assignment</a>
+                <div class="assignment-link" onclick="window.location.href='csv.visualizer.html'">
+                    View Assignment
+                </div>
             </div>
             
             <div class="assignment-card">
-                <span class="status upcoming">Upcoming</span>
+                <span class="status complete">Complete</span>
                 <h3>Week 5</h3>
                 <p>Database Management Systems</p>
-                <a href="#" class="button" style="background-color: #ccc; cursor: not-allowed;">Coming Soon</a>
+                <div class="assignment-link" style="background-color: #ccc; cursor: not-allowed;">
+                    Coming Soon
+                </div>
             </div>
             
             <div class="assignment-card">
-                <span class="status upcoming">Upcoming</span>
-                <h3>Week 6</h3>
-                <p>Information Security Fundamentals</p>
-                <a href="#" class="button" style="background-color: #ccc; cursor: not-allowed;">Coming Soon</a>
+                <span class="status complete">Complete</span>
+                <h3>Week 6 - Project</h3>
+                <p>Crypto Project</p>
+                <div class="assignment-link" style="background-color: #ccc; cursor: not-allowed;">
+                    Coming Soon
+                </div>
+            </div>
+            
+            <div class="assignment-card">
+                <span class="status complete">Complete</span>
+                <h3>Week 7</h3>
+                <p>AppScript Assignment</p>
+                <div class="assignment-link" onclick="window.open('https://docs.google.com/document/d/1IFtxR_VVfFE28KEVIKxi-hwdmHpMGdCuUPFdnQ8qarA/edit?usp=sharing', '_blank')">
+                    View Assignment
+                </div>
             </div>
         </div>
     </div>
@@ -173,5 +278,48 @@
     <footer>
         &copy; 2025 Abbos Muminov - Dong-A University
     </footer>
+
+    <script>
+        // Fetch grades from your Apps Script web app
+        function fetchGrades() {
+            const gradesDisplay = document.getElementById('grades-display');
+            const gradesTooltip = document.getElementById('grades-tooltip');
+            const gradesPercentage = gradesTooltip.querySelector('.grade-percentage');
+            const gradesDetails = document.getElementById('grades-details');
+            
+            gradesDisplay.textContent = 'Loading grades...';
+            
+            // Replace with your web app URL
+            fetch('YOUR_WEB_APP_URL')
+                .then(response => response.json())
+                .then(data => {
+                    // Update the display
+                    gradesDisplay.textContent = data.currentGrade;
+                    gradesPercentage.textContent = data.currentGrade.split('%')[0] + '%';
+                    
+                    // Update the tooltip content
+                    gradesDetails.innerHTML = '';
+                    data.grades.forEach(grade => {
+                        const gradeItem = document.createElement('div');
+                        gradeItem.className = 'grade-item';
+                        gradeItem.innerHTML = `
+                            <span class="grade-name">${grade.name}</span>
+                            <span class="grade-value">${grade.received}/${grade.max} (${grade.percentage}%)</span>
+                        `;
+                        gradesDetails.appendChild(gradeItem);
+                    });
+                })
+                .catch(error => {
+                    gradesDisplay.textContent = 'Error loading grades';
+                    console.error(error);
+                });
+        }
+
+        // Initial fetch
+        fetchGrades();
+
+        // Refresh every 5 minutes
+        setInterval(fetchGrades, 300000);
+    </script>
 </body>
 </html>
