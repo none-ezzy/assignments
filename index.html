@@ -279,47 +279,50 @@
         &copy; 2025 Abbos Muminov - Dong-A University
     </footer>
 
-    <script>
-        // Fetch grades from your Apps Script web app
-        function fetchGrades() {
-            const gradesDisplay = document.getElementById('grades-display');
-            const gradesTooltip = document.getElementById('grades-tooltip');
-            const gradesPercentage = gradesTooltip.querySelector('.grade-percentage');
-            const gradesDetails = document.getElementById('grades-details');
-            
-            gradesDisplay.textContent = 'Loading grades...';
-            
-            // Replace with your web app URL
-            fetch('https://script.google.com/macros/s/AKfycbxs-UyC5qT73oenSzdQ4URIFpI2v1Kk5KBiRj1ww599hdtauqADiLoxXXcze6nqmmMMvQ/exec')
-                .then(response => response.json())
-                .then(data => {
-                    // Update the display
-                    gradesDisplay.textContent = data.currentGrade;
-                    gradesPercentage.textContent = data.currentGrade.split('%')[0] + '%';
-                    
-                    // Update the tooltip content
-                    gradesDetails.innerHTML = '';
-                    data.grades.forEach(grade => {
-                        const gradeItem = document.createElement('div');
-                        gradeItem.className = 'grade-item';
-                        gradeItem.innerHTML = `
-                            <span class="grade-name">${grade.name}</span>
-                            <span class="grade-value">${grade.received}/${grade.max} (${grade.percentage}%)</span>
-                        `;
-                        gradesDetails.appendChild(gradeItem);
-                    });
-                })
-                .catch(error => {
-                    gradesDisplay.textContent = 'Error loading grades';
-                    console.error(error);
-                });
-        }
+<script>
+// Grade display element
+const gradesDisplay = document.getElementById('grades-display');
+const gradesTooltip = document.getElementById('grades-tooltip');
+const gradesPercentage = gradesTooltip.querySelector('.grade-percentage');
+const gradesDetails = document.getElementById('grades-details');
 
-        // Initial fetch
-        fetchGrades();
+// Function to fetch grades with error handling
+async function fetchGrades() {
+  try {
+    gradesDisplay.textContent = 'Loading...';
+    
+    // Replace with your actual web app URL
+    const response = await fetch('https://script.google.com/macros/s/AKfycbxqTDuAZT1ApXgHmYgkcZe6bgWiY1v39ff_NGdWoHDqsdC3r5lkO9VhKGPcnkGSkxjXuA/exec');
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Unknown error');
+    }
+    
+    // Update display
+    gradesDisplay.textContent = data.currentGrade.split(' ')[0]; // Show just percentage
+    gradesPercentage.textContent = data.currentGrade;
+    
+    // Update tooltip content
+    gradesDetails.innerHTML = data.grades.map(grade => `
+      <div class="grade-item">
+        <span class="grade-name">${grade.name}</span>
+        <span class="grade-value">${grade.received}/${grade.max} (${grade.percentage}%)</span>
+      </div>
+    `).join('');
+    
+  } catch (error) {
+    gradesDisplay.textContent = 'Error';
+    gradesDetails.innerHTML = `<div style="color: red;">Failed to load grades: ${error.message}</div>`;
+    console.error('Grade fetch error:', error);
+  }
+}
 
-        // Refresh every 5 minutes
-        setInterval(fetchGrades, 300000);
-    </script>
+// Initial load
+fetchGrades();
+
+// Refresh every 2 minutes
+setInterval(fetchGrades, 120000);
+</script>
 </body>
 </html>
