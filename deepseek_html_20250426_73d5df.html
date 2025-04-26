@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Apps Script Notes</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        header {
+            background-color: #4285F4; /* Google blue */
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #4285F4;
+            border-bottom: 2px solid #EA4335; /* Google red */
+            padding-bottom: 5px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .pros, .cons {
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .pros {
+            background-color: #E6F4EA; /* Light green */
+            border-left: 4px solid #34A853; /* Google green */
+        }
+        .cons {
+            background-color: #FCE8E6; /* Light red */
+            border-left: 4px solid #EA4335; /* Google red */
+        }
+        .use-case {
+            background-color: #E8F0FE; /* Light blue */
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border-left: 4px solid #4285F4;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #000;
+            color: white;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Google Apps Script</h1>
+        <p>Powerful Automation for Google Workspace</p>
+    </header>
+
+    <div class="card">
+        <h2>Introduction</h2>
+        <p>Google Apps Script (AS) is a cloud-based JavaScript platform that lets you automate tasks across Google products like Sheets, Docs, Gmail, and more. It provides easy ways to create custom functions, automate workflows, and build web apps.</p>
+    </div>
+
+    <div class="card">
+        <h2>5Ws Framework for Understanding New Concepts</h2>
+        <ul>
+            <li><strong>What</strong> is it? (Definition and core functionality)</li>
+            <li><strong>Why</strong> does it exist? (Purpose and benefits)</li>
+            <li><strong>Who</strong> is it for? (Target users and skill level required)</li>
+            <li><strong>When</strong> should I use it? (Ideal use cases and scenarios)</li>
+            <li><strong>Where</strong> does it run? (Platform requirements and limitations)</li>
+            <li><strong>How</strong> does it work? (Basic architecture and execution)</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Creative Uses of Apps Script</h2>
+        <div class="use-case">
+            <strong>Automated Grading System</strong> - Create self-grading quizzes that provide instant feedback to students.
+        </div>
+        <div class="use-case">
+            <strong>Personal Finance Dashboard</strong> - Connect bank data to Sheets and visualize spending habits.
+        </div>
+        <div class="use-case">
+            <strong>Custom CRM</strong> - Build a simple customer relationship manager using Sheets as a database.
+        </div>
+        <div class="use-case">
+            <strong>Email Newsletter Generator</strong> - Automatically create personalized emails from template and data.
+        </div>
+        <div class="use-case">
+            <strong>Website Content Updater</strong> - Sync content between Google Docs and your website CMS.
+        </div>
+        <div class="use-case">
+            <strong>Social Media Scheduler</strong> - Auto-post to multiple platforms from a Sheets calendar.
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Pros and Cons</h2>
+        <div class="pros-cons">
+            <div class="pros">
+                <h3>Pros</h3>
+                <ul>
+                    <li>Completely free to use</li>
+                    <li>Deep integration with Google Workspace</li>
+                    <li>No server maintenance required</li>
+                    <li>Easy sharing and collaboration</li>
+                    <li>JavaScript-based (widely known language)</li>
+                    <li>Extensive library of pre-built services</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h3>Cons</h3>
+                <ul>
+                    <li>Execution time limits (6-30 minutes depending on account)</li>
+                    <li>No local development environment</li>
+                    <li>Limited debugging capabilities</li>
+                    <li>Can be slow with large datasets</li>
+                    <li>No version control integration</li>
+                    <li>Limited to Google ecosystem</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Key Takeaways</h2>
+        <ul>
+            <li>AS is best for automating repetitive tasks in Google Workspace</li>
+            <li>Great for prototyping ideas quickly without infrastructure</li>
+            <li>Perfect for educators, small businesses, and personal productivity</li>
+            <li>Not suitable for high-performance or complex applications</li>
+            <li>Learning curve is low for JavaScript developers</li>
+        </ul>
+    </div>
+
+    <footer>
+        &copy; 2025 Abbos Muminov - Dong-A University | Week 7 - Information Management
+    </footer>
+</body>
+</html>
