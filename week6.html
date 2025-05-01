@@ -212,6 +212,78 @@
         @media (max-width: 768px) {
             .team-grid, .algorithm-grid {
                 grid-template-columns: 1fr;
+        /* TESTING PROCESS STYLES */
+    .testing-phase {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-left: 4px solid #FF8C00;
+    }
+    .test-finding {
+        display: flex;
+        gap: 15px;
+        padding: 12px;
+        background: white;
+        border-radius: 6px;
+        margin: 10px 0;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .test-icon {
+        font-size: 1.5em;
+        flex-shrink: 0;
+    }
+    .testing-phase h3 {
+        color: #4285F4;
+        margin-top: 0;
+        padding-bottom: 8px;
+        border-bottom: 1px dashed #ddd;
+    }
+    .progress-tracker {
+        display: flex;
+        justify-content: space-between;
+        margin: 30px 0;
+        position: relative;
+    }
+    .progress-tracker::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: #e0e0e0;
+        z-index: 1;
+    }
+    .progress-step {
+        text-align: center;
+        z-index: 2;
+        position: relative;
+    }
+    .progress-step span {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 50%;
+        background: #e0e0e0;
+        color: #666;
+        margin-bottom: 8px;
+    }
+    .progress-step.completed span {
+        background: #4285F4;
+        color: white;
+    }
+    .progress-step p {
+        margin: 0;
+        font-size: 0.9em;
+        color: #666;
+    }
+    .progress-step.completed p {
+        color: #4285F4;
+        font-weight: bold;
+    }        
             }
         }
     </style>
@@ -224,7 +296,29 @@
             <p>An educational tool demonstrating cryptographic algorithms from simple to advanced</p>
         </div>
     </header>
-
+<!-- PROGRESS TRACKER -->
+<div class="progress-tracker">
+    <div class="progress-step completed">
+        <span>1</span>
+        <p>Research</p>
+    </div>
+    <div class="progress-step completed">
+        <span>2</span>
+        <p>Implementation</p>
+    </div>
+    <div class="progress-step completed">
+        <span>3</span>
+        <p>First Test</p>
+    </div>
+    <div class="progress-step completed">
+        <span>4</span>
+        <p>Enhancements</p>
+    </div>
+    <div class="progress-step completed">
+        <span>5</span>
+        <p>Final Test</p>
+    </div>
+</div>
     <div class="container">
         <section class="section">
             <h2>Team Members</h2>
@@ -289,7 +383,50 @@
                 </div>
             </div>
         </section>
-
+<!-- TESTING PROCESS SECTION -->
+<section class="card">
+    <h2>Testing & Iteration Process</h2>
+    
+    <div class="testing-phase">
+        <h3>First Testing Round</h3>
+        <div class="test-finding">
+            <span class="test-icon">🔍</span>
+            <div>
+                <strong>Issue Found:</strong> Playfair Cipher gave incorrect results
+                <br>
+                <strong>Solution:</strong> Debugged matrix transformation logic and added validation checks
+            </div>
+        </div>
+        <div class="test-finding">
+            <span class="test-icon">📱</span>
+            <div>
+                <strong>Issue Found:</strong> Layout issues on mobile devices
+                <br>
+                <strong>Solution:</strong> Implemented responsive design with Tailwind CSS
+            </div>
+        </div>
+    </div>
+    
+    <div class="testing-phase">
+        <h3>Second Testing Round</h3>
+        <div class="test-finding">
+            <span class="test-icon">⚡</span>
+            <div>
+                <strong>Issue Found:</strong> Slow performance with large text files
+                <br>
+                <strong>Solution:</strong> Optimized encryption functions and added loading indicators
+            </div>
+        </div>
+        <div class="test-finding">
+            <span class="test-icon">💡</span>
+            <div>
+                <strong>Feedback:</strong> Needed clearer user instructions
+                <br>
+                <strong>Solution:</strong> Added tooltips and step-by-step guides
+            </div>
+        </div>
+    </div>
+</section>
         <section class="section">
             <h2>Project Timeline</h2>
             <div class="timeline">
