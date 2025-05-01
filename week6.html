@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Key Not Found - Cryptography Project</title>
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #166088;
+            --accent: #4fc3f7;
+            --dark: #0a1128;
+            --light: #f8f9fa;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .team-name {
+            font-family: 'Courier New', monospace;
+            background-color: rgba(0,0,0,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 1.2rem;
+        }
+        .section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--accent);
+        }
+        h2 {
+            color: var(--secondary);
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .member-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+            border-top: 4px solid var(--accent);
+        }
+        .member-card:hover {
+            transform: translateY(-5px);
+        }
+        .member-card.abbos {
+            border-top: 4px solid #4CAF50;
+            position: relative;
+        }
+        .member-card.abbos::after {
+            content: "Algorithm Expert";
+            position: absolute;
+            top: -10px;
+            right: 15px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .member-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: var(--secondary);
+        }
+        .member-role {
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        .algorithm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .algorithm-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--accent);
+        }
+        .algorithm-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+        .algorithm-type {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        .simple {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+        .intermediate {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .advanced {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+        .timeline {
+            position: relative;
+            padding-left: 50px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--accent);
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -38px;
+            top: 5px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            border: 3px solid var(--accent);
+        }
+        .timeline-date {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        .reflection {
+            background-color: #f5f5f5;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+        .enhancement {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #ddd;
+        }
+        .enhancement-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            color: var(--accent);
+        }
+        .checklist {
+            list-style-type: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 30px;
+        }
+        .checklist li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .team-grid, .algorithm-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Cryptography Project</h1>
+            <div class="team-name">404 key not found</div>
+            <p>An educational tool demonstrating cryptographic algorithms from simple to advanced</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="section">
+            <h2>Team Members</h2>
+            <div class="team-grid">
+                <div class="member-card">
+                    <div class="member-name">Behruz</div>
+                    <div class="member-role">Frontend Developer / UI/UX Designer</div>
+                    <p>Connected frontend interface elements with backend algorithm functions.</p>
+                </div>
+                <div class="member-card">
+                    <div class="member-name">Islombek</div>
+                    <div class="member-role">Researcher / Documenter</div>
+                    <p>Wrote clear explanations about algorithms and documented project steps.</p>
+                </div>
+                <div class="member-card abbos">
+                    <div class="member-name">Abbos</div>
+                    <div class="member-role">Algorithm Developer</div>
+                    <p>Selected and coded two simple, two intermediate, and two advanced algorithms, ensuring educational value and technical complexity.</p>
+                </div>
+                <div class="member-card">
+                    <div class="member-name">Salohiddin</div>
+                    <div class="member-role">Project Coordinator / Tester</div>
+                    <p>Organized testing sessions and coordinated feedback collection.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Cryptographic Algorithms</h2>
+            <p>As the Algorithm Developer, I selected and implemented a range of algorithms to demonstrate cryptographic principles:</p>
+            
+            <div class="algorithm-grid">
+                <div class="algorithm-card">
+                    <div class="algorithm-name">Caesar Cipher</div>
+                    <div class="algorithm-type simple">Simple</div>
+                    <p>Basic substitution cipher ideal for introducing encryption concepts.</p>
+                </div>
+                <div class="algorithm-card">
+                    <div class="algorithm-name">Playfair Cipher</div>
+                    <div class="algorithm-type simple">Simple</div>
+                    <p>Digraph-based substitution cipher that introduces non-linear encryption.</p>
+                </div>
+                <div class="algorithm-card">
+                    <div class="algorithm-name">Vigenère Cipher</div>
+                    <div class="algorithm-type intermediate">Intermediate</div>
+                    <p>Polyalphabetic cipher that resists frequency analysis better than simple substitution.</p>
+                </div>
+                <div class="algorithm-card">
+                    <div class="algorithm-name">Hill Cipher</div>
+                    <div class="algorithm-type intermediate">Intermediate</div>
+                    <p>Matrix-based encryption that demonstrates linear algebra applications in cryptography.</p>
+                </div>
+                <div class="algorithm-card">
+                    <div class="algorithm-name">AES</div>
+                    <div class="algorithm-type advanced">Advanced</div>
+                    <p>Industry-standard symmetric encryption used in HTTPS and secure communications.</p>
+                </div>
+                <div class="algorithm-card">
+                    <div class="algorithm-name">RSA</div>
+                    <div class="algorithm-type advanced">Advanced</div>
+                    <p>Public-key cryptosystem widely used for secure data transmission.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Project Timeline</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">Team Formation</div>
+                    <p>Established roles with me as Algorithm Developer responsible for selecting and implementing cryptographic algorithms.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">Algorithm Research</div>
+                    <p>Researched and evaluated multiple algorithms to create a balanced educational progression.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">Implementation</div>
+                    <p>Coded six algorithms in JavaScript with modular design for easy integration with frontend.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">First Testing Round</div>
+                    <p>Identified and fixed issues in algorithm implementation (especially Playfair Cipher).</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">Enhancements</div>
+                    <p>Refactored complex algorithm logic and optimized performance.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">Final Testing</div>
+                    <p>Verified all algorithms worked correctly across different input types and sizes.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Key Challenges & Solutions</h2>
+            <div class="enhancement">
+                <div class="enhancement-icon">🔐</div>
+                <div>
+                    <h3>Algorithm Debugging</h3>
+                    <p>The Playfair Cipher implementation initially gave incorrect results during testing. Through careful review of the algorithm logic and test cases, I identified and fixed the matrix transformation step.</p>
+                </div>
+            </div>
+            <div class="enhancement">
+                <div class="enhancement-icon">⚡</div>
+                <div>
+                    <h3>Performance Optimization</h3>
+                    <p>Initial implementation of RSA was slow with larger inputs. I optimized the modular exponentiation process to handle larger numbers more efficiently.</p>
+                </div>
+            </div>
+            <div class="enhancement">
+                <div class="enhancement-icon">🔄</div>
+                <div>
+                    <h3>Integration with Frontend</h3>
+                    <p>Ensuring consistent data formatting between my algorithm outputs and the frontend interface required careful coordination with Behruz and thorough testing.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>My Reflection</h2>
+            <div class="reflection">
+                <p>"Building secure encryption algorithms challenged me to think critically about both coding logic and security vulnerabilities. Working with advanced algorithms like RSA deepened my understanding of public key infrastructure, and troubleshooting issues helped me become a more careful and precise developer. Implementing six different algorithms required me to adapt to different cryptographic approaches while maintaining consistent interfaces for the frontend team. This project significantly improved my ability to write clean, efficient, and well-documented code for complex mathematical operations."</p>
+                <p><strong>- Abbos, Algorithm Developer</strong></p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Project Deliverables</h2>
+            <ul class="checklist">
+                <li>Functional cryptography tool with six implemented algorithms</li>
+                <li>Comprehensive documentation of algorithms and project process</li>
+                <li>Responsive web interface with educational explanations</li>
+                <li>Testing reports and iteration documentation</li>
+                <li>Team member reflections on the project experience</li>
+            </ul>
+        </section>
+    </div>
+</body>
+</html>
