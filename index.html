@@ -256,27 +256,31 @@
     </footer>
 
 <script>
-    // Updated Grade Display Script
-    document.addEventListener('DOMContentLoaded', function() {
-        // Replace with your actual Google Apps Script URL
-        const scriptUrl = 'https://script.google.com/macros/s/AKfycbxG_pOdiqqwfoFaRXoBlrFYrhSjfrOBgLBJBkD7oo8y5zkb3wjX8U8TVWeCZwSKjSi4OA/exec';
-        
-        fetch(scriptUrl)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const gradeDisplay = document.getElementById('grades-display');
-                    const [percentage, fraction] = data.currentGrade.split(' ');
-                    
-                    gradeDisplay.querySelector('.grade-percentage').textContent = percentage;
-                    gradeDisplay.querySelector('.grade-fraction').textContent = fraction.replace(/[()]/g, '');
-                }
-            })
-            .catch(error => {
-                console.error('Error loading grades:', error);
-                document.getElementById('grades-display').querySelector('.grade-percentage').textContent = 'Error';
-            });
+document.addEventListener('DOMContentLoaded', function() {
+  const scriptUrl = 'https://script.google.com/macros/s/AKfycbwohO7Gp7CI4gD2g-mQznXIJuF8543fK4ks6DtV5kvKV2X_3It2rzu4Qf0ctX1VlnNNew/exec';
+  const gradeDisplay = document.getElementById('grades-display');
+  
+  fetch(scriptUrl)
+    .then(response => {
+      if (!response.ok) throw new Error('Network error');
+      return response.json();
+    })
+    .then(data => {
+      if (data.success) {
+        const [percentage, fraction] = data.currentGrade.split(' ');
+        gradeDisplay.querySelector('.grade-percentage').textContent = percentage;
+        gradeDisplay.querySelector('.grade-fraction').textContent = 
+          fraction.replace(/[()]/g, '');
+      } else {
+        throw new Error(data.error || 'Grade data error');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      gradeDisplay.querySelector('.grade-percentage').textContent = 'Error';
+      gradeDisplay.querySelector('.grade-fraction').textContent = 'Load failed';
     });
-    </script>
+});
+</script>
 </body>
 </html>
