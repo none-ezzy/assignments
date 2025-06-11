@@ -15,8 +15,8 @@
             background-color: #f5f5f5;
         }
         header {
-            background-color: #FF8C00; /* Orange */
-            color: #000; /* Black */
+            background-color: #FF8C00;
+            color: #000;
             padding: 20px;
             text-align: center;
             border-radius: 5px;
@@ -42,26 +42,30 @@
         .button {
             display: inline-block;
             padding: 10px 20px;
-            background-color: #FF8C00; /* Orange */
-            color: #000; /* Black */
+            background-color: #FF8C00;
+            color: #000;
             text-decoration: none;
             border-radius: 5px;
             border: none;
             cursor: pointer;
             font-size: 16px;
             margin: 5px;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
             font-weight: bold;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
         }
         .button:hover {
-            background-color: #E67300; /* Darker Orange */
+            background-color: #E67300;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
         }
         footer {
             text-align: center;
             padding: 10px;
             margin-top: 20px;
-            background-color: #000; /* Black */
+            background-color: #000;
             color: white;
             border-radius: 5px;
             font-size: 14px;
@@ -78,7 +82,7 @@
             padding: 15px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             border-top: 3px solid #FF8C00;
-            transition: transform 0.3s;
+            transition: all 0.3s;
             position: relative;
         }
         .assignment-card:hover {
@@ -94,6 +98,7 @@
         .assignment-card p {
             color: #666;
             font-size: 14px;
+            min-height: 40px;
         }
         .status {
             display: inline-block;
@@ -101,6 +106,10 @@
             border-radius: 3px;
             font-size: 12px;
             margin-bottom: 10px;
+            transition: transform 0.2s;
+        }
+        .status:hover {
+            transform: scale(1.05);
         }
         .complete {
             background-color: #e6f7e6;
@@ -122,6 +131,7 @@
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
+            text-decoration: none;
         }
         .assignment-link:hover {
             background-color: #FF8C00;
@@ -138,7 +148,7 @@
             opacity: 1;
             right: 15px;
         }
-       #grades-display {
+        #grades-display {
             position: fixed;
             top: 20px;
             right: 20px;
@@ -153,10 +163,13 @@
             transition: all 0.3s;
             text-align: center;
             min-width: 80px;
+            text-decoration: none;
+            display: block;
         }
         #grades-display:hover {
             transform: scale(1.05);
             background-color: #E67300;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         #grades-display .grade-percentage {
             font-size: 18px;
@@ -166,14 +179,48 @@
             font-size: 12px;
             opacity: 0.9;
         }
-   </style>
+        .assignment-card > div {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+            align-items: center;
+        }
+        .project-badge {
+            background-color: #2196F3;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            .assignments-container {
+                grid-template-columns: 1fr;
+            }
+            #grades-display {
+                top: 10px;
+                right: 10px;
+                padding: 8px 12px;
+            }
+            .button {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Updated Grades Display (now clickable) -->
     <a href="grades.html" id="grades-display">
         <div class="grade-percentage">--%</div>
         <div class="grade-fraction">--/--</div>
     </a>
+    
     <header>
         <h1>Abbos Muminov</h1>
         <p>Assignment Portal</p>
@@ -194,106 +241,118 @@
                 <span class="status complete">Complete</span>
                 <h3>Week 2</h3>
                 <p>Introduction to Information Management Systems</p>
-                <div class="assignment-link" onclick="window.open('https://drive.google.com/drive/folders/1MauPH-Dk9ia04Dddz0aQDChNJE6kLzsB?usp=drive_link', '_blank')">
+                <a class="assignment-link" href="https://drive.google.com/drive/folders/1MauPH-Dk9ia04Dddz0aQDChNJE6kLzsB?usp=drive_link" target="_blank">
                     View Assignment
-                </div>
+                </a>
             </div>
             
             <div class="assignment-card">
                 <span class="status complete">Complete</span>
                 <h3>Week 3</h3>
                 <p>Command Line Dungeon Adventure</p>
-                <div class="assignment-link" onclick="window.location.href='week3.html'">
+                <a class="assignment-link" href="week3.html">
                     View Assignment
-                </div>
+                </a>
             </div>
             
             <div class="assignment-card">
                 <span class="status complete">Complete</span>
                 <h3>Week 4</h3>
                 <p>Virtual Library & Idea Sourcing</p>
-                <div class="assignment-link" onclick="window.location.href='csv.visualizer.html'">
+                <a class="assignment-link" href="csv.visualizer.html">
                     View Assignment
-                </div>
+                </a>
             </div>
             
             <div class="assignment-card">
                 <span class="status complete">Complete</span>
                 <h3>Week 5</h3>
                 <p>Database Management Systems</p>
-                <div class="assignment-link" style="background-color: #ccc; cursor: not-allowed;">
-                    Coming Soon
-                </div>
+                <a class="assignment-link" href="#" style="background-color: #ccc; cursor: not-allowed;">
+                    Documentation
+                </a>
             </div>
             
             <div class="assignment-card">
-    <span class="status complete">Complete</span>
-    <h3>Week 6 - Project</h3>
-    <p>Cryptography Tool Development</p>
-    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-        <a href="https://behruz1262.github.io/encryption-decryption-tool" class="button" target="_blank" style="text-align: center;">
-            Crypto Tool
-        </a>
-        <a href="week6.html" class="button" style="text-align: center;">
-            Documentation
-        </a>
-    </div>
-</div>
+                <span class="status complete">Complete</span>
+                <h3>Week 6 - Project</h3>
+                <p>Cryptography Tool Development</p>
+                <div>
+                    <a href="https://behruz1262.github.io/encryption-decryption-tool" class="button" target="_blank">
+                        Crypto Tool
+                    </a>
+                    <a href="week6.html" class="button">
+                        Documentation
+                    </a>
+                </div>
+            </div>
             
             <div class="assignment-card">
                 <span class="status complete">Complete</span>
                 <h3>Week 7</h3>
                 <p>AppScript Assignment</p>
-                <div class="assignment-link" onclick="window.location.href='week.7.html'">
+                <a class="assignment-link" href="week.7.html">
                     View Assignment
+                </a>
+            </div>
+            
+            <div class="assignment-card">
+                <span class="status complete">Complete</span>
+                <h3>Week 10</h3>
+                <p>Advanced Concepts Final Project</p>
+                <a class="assignment-link" href="https://chatgpt.com/share/6825b014-5a10-800e-9039-8620d7b1a53d" target="_blank">
+                    View Assignment
+                </a>
+            </div>
+            
+            <!-- New Project 2 -->
+            <div class="assignment-card">
+                <span class="project-badge">NEW</span>
+                <span class="status complete">Complete</span>
+                <h3>Project 2</h3>
+                <p>Advanced Data Visualization Dashboard</p>
+                <div>
+                    <a href="project2.html" class="button">
+                        Project Documentation
+                    </a>
+                    <a href="https://github.com/abbos/project2" class="button" target="_blank">
+                        GitHub Repository
+                    </a>
                 </div>
             </div>
         </div>
     </div>
-<!-- [Existing Week 7 card...] -->
-
-<!-- Add Week 10 card here -->
-<div class="assignment-card">
-    <span class="status complete">Complete</span>
-    <h3>Week 10</h3>
-    <p>Advanced Concepts Final Project</p>
-    <div class="assignment-link" onclick="window.open('https://chatgpt.com/share/6825b014-5a10-800e-9039-8620d7b1a53d', '_blank')">
-        View Assignment
-    </div>
-</div>
-
-</div> <!-- This is the closing tag of assignments-container -->
     
     <footer>
         &copy; 2025 Abbos Muminov - Dong-A University
     </footer>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const scriptUrl = 'https://script.google.com/macros/s/AKfycbwohO7Gp7CI4gD2g-mQznXIJuF8543fK4ks6DtV5kvKV2X_3It2rzu4Qf0ctX1VlnNNew/exec';
-  const gradeDisplay = document.getElementById('grades-display');
-  
-  fetch(scriptUrl)
-    .then(response => {
-      if (!response.ok) throw new Error('Network error');
-      return response.json();
-    })
-    .then(data => {
-      if (data.success) {
-        const [percentage, fraction] = data.currentGrade.split(' ');
-        gradeDisplay.querySelector('.grade-percentage').textContent = percentage;
-        gradeDisplay.querySelector('.grade-fraction').textContent = 
-          fraction.replace(/[()]/g, '');
-      } else {
-        throw new Error(data.error || 'Grade data error');
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      gradeDisplay.querySelector('.grade-percentage').textContent = 'Error';
-      gradeDisplay.querySelector('.grade-fraction').textContent = 'Load failed';
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const scriptUrl = 'https://script.google.com/macros/s/AKfycbwohO7Gp7CI4gD2g-mQznXIJuF8543fK4ks6DtV5kvKV2X_3It2rzu4Qf0ctX1VlnNNew/exec';
+      const gradeDisplay = document.getElementById('grades-display');
+      
+      fetch(scriptUrl)
+        .then(response => {
+          if (!response.ok) throw new Error('Network error');
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            const [percentage, fraction] = data.currentGrade.split(' ');
+            gradeDisplay.querySelector('.grade-percentage').textContent = percentage;
+            gradeDisplay.querySelector('.grade-fraction').textContent = 
+              fraction.replace(/[()]/g, '');
+          } else {
+            throw new Error(data.error || 'Grade data error');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          gradeDisplay.querySelector('.grade-percentage').textContent = 'Error';
+          gradeDisplay.querySelector('.grade-fraction').textContent = 'Load failed';
+        });
     });
-});
-</script>
+    </script>
 </body>
 </html>
