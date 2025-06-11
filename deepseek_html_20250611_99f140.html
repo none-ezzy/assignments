@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dopamine Tracker - Digital Wellness Analysis</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 40px 0;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card h3 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+        
+        .stat-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .stat {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 15px;
+            flex: 1;
+            margin: 0 5px;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .insights {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .insights h2 {
+            color: #2d3748;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+        
+        .insight-item {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border-left: 5px solid #4299e1;
+        }
+        
+        .insight-item h4 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .insight-item p {
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+        
+        .progress-bar {
+            background: #e2e8f0;
+            border-radius: 10px;
+            height: 20px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4299e1, #9f7aea);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        .emoji {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        .reflection-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .reflection-item {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border-left: 5px solid #f6ad55;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-container {
+                flex-direction: column;
+            }
+            
+            .stat {
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 Dopamine Tracker</h1>
+            <p>A 7-Day Journey Into Digital Wellness & Self-Awareness</p>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>📊 Usage Overview</h3>
+                <div class="stat-container">
+                    <div class="stat">
+                        <span class="stat-number">64</span>
+                        <span class="stat-label">Total Sessions</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">1886</span>
+                        <span class="stat-label">Total Minutes</span>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="dailyUsageChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>📱 App Breakdown</h3>
+                <div class="chart-container">
+                    <canvas id="appUsageChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>😊 Emotional Impact</h3>
+                <div class="chart-container">
+                    <canvas id="emotionChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>⭐ Usefulness Analysis</h3>
+                <div class="stat-container">
+                    <div class="stat">
+                        <span class="stat-number">2.8</span>
+                        <span class="stat-label">Avg Rating</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">47%</span>
+                        <span class="stat-label">Low Value</span>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="usefulnessChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="insights">
+            <h2>🔍 Key Insights & Patterns</h2>
+            
+            <div class="insight-item">
+                <h4><span class="emoji">📉</span>The Awareness Effect</h4>
+                <p>Weekly usage averaged 269 minutes/day with a 20% reduction from Monday (325min) to Sunday (260min). The most significant drop occurred in the first 3 days (34% reduction from Monday to Wednesday).</p>
+            </div>
+            
+            <div class="insight-item">
+                <h4><span class="emoji">🌙</span>Late-Night Struggle Intensified</h4>
+                <p>Late-night sessions (22:00-00:15) occurred every night, totaling 485 minutes (26% of total usage). 85% of these sessions resulted in "Worse" or "Lost" emotions.</p>
+            </div>
+            
+            <div class="insight-item">
+                <h4><span class="emoji">📱</span>Instagram Reels = Primary Drain</h4>
+                <p>Instagram Reels consumed 990 minutes (52% of total usage) but had the lowest average rating (1.4). 92% of Reels sessions resulted in negative emotional outcomes.</p>
+            </div>
+            
+            <div class="insight-item">
+                <h4><span class="emoji">💬</span>Telegram = Consistent Positive Impact</h4>
+                <p>Family communication via Telegram showed consistently high ratings (avg 4.6) and positive emotional outcomes, with 100% of sessions improving or maintaining positive emotions.</p>
+            </div>
+            
+            <div class="insight-item">
+                <h4><span class="emoji">🚌</span>Commute Vulnerability Confirmed</h4>
+                <p>All 7 commute sessions (avg 50 min) involved mindless scrolling. These sessions had an average usefulness rating of 1.6 and consistently resulted in "Lost" emotions.</p>
+            </div>
+            
+            <div class="insight-item">
+                <h4><span class="emoji">📚</span>Positive Alternatives Emerged</h4>
+                <p>Audiobooks (Audible) in the evening consistently rated 4-5 and improved sleep readiness. These sessions had 100% positive emotional outcomes.</p>
+            </div>
+        </div>
+        
+        <div class="reflection-section">
+            <h2>🪞 Self-Reflection & Future Actions</h2>
+            
+            <div class="reflection-item">
+                <h4><span class="emoji">🎯</span>What I Learned About Myself</h4>
+                <p>I use my phone primarily as an emotional regulation tool during transitions (commutes), low-energy states (tired/bored), and avoidance (procrastination). The 52% time spent on Instagram Reels contrasts sharply with its negative impact, showing a clear dopamine-trap pattern.</p>
+            </div>
+            
+            <div class="reflection-item">
+                <h4><span class="emoji">🔄</span>Habit Loops Identified</h4>
+                <p><strong>Trigger:</strong> Boredom/Transition → <strong>Routine:</strong> Instagram Reels → <strong>Reward:</strong> Temporary stimulation → <strong>Result:</strong> Feeling worse/time loss. This cycle repeated 32 times this week, averaging 31 minutes per session.</p>
+            </div>
+            
+            <div class="reflection-item">
+                <h4><span class="emoji">💡</span>Actionable Changes</h4>
+                <p>1. <strong>Reels Elimination:</strong> Uninstall Instagram app, use web version only with 15-min daily limit<br>
+                2. <strong>Commute Solution:</strong> Pre-download 3 podcasts/audiobooks for daily commute<br>
+                3. <strong>Bedtime Protocol:</strong> Charge phone outside bedroom, use Audible for wind-down routine<br>
+                4. <strong>Positive Reinforcement:</strong> Keep Telegram notifications on, schedule 2 family calls/week<br>
+                5. <strong>Procrastination Hack:</strong> Implement 5-minute rule before reaching for phone</p>
+            </div>
+            
+            <div class="reflection-item">
+                <h4><span class="emoji">📈</span>Progress Tracking</h4>
+                <p>This 7-day analysis reveals that 47% of my phone usage provides low value. Next phase metrics: 1) Reduce Reels time by 80%, 2) Increase sleep quality score, 3) Maintain Telegram/YouTube as primary positive-use apps, 4) Measure procrastination reduction in study hours.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Daily Usage Chart
+        const dailyCtx = document.getElementById('dailyUsageChart').getContext('2d');
+        new Chart(dailyCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Daily Usage (minutes)',
+                    data: [325, 210, 220, 213, 210, 250, 260],
+                    borderColor: '#4299e1',
+                    backgroundColor: 'rgba(66, 153, 225, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Minutes'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // App Usage Chart
+        const appCtx = document.getElementById('appUsageChart').getContext('2d');
+        new Chart(appCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Instagram Reels', 'YouTube', 'Telegram', 'LearningX', 'Audible'],
+                datasets: [{
+                    data: [990, 485, 145, 35, 85],
+                    backgroundColor: [
+                        '#f56565',
+                        '#ed8936',
+                        '#38b2ac',
+                        '#4299e1',
+                        '#9f7aea'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+        
+        // Emotion Impact Chart
+        const emotionCtx = document.getElementById('emotionChart').getContext('2d');
+        new Chart(emotionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Better', 'Neutral', 'Worse'],
+                datasets: [{
+                    label: 'Frequency',
+                    data: [18, 11, 35],
+                    backgroundColor: [
+                        '#48bb78',
+                        '#ed8936',
+                        '#f56565'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Sessions'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Usefulness Chart
+        const usefulnessCtx = document.getElementById('usefulnessChart').getContext('2d');
+        new Chart(usefulnessCtx, {
+            type: 'bar',
+            data: {
+                labels: ['1 (Low)', '2', '3', '4', '5 (High)'],
+                datasets: [{
+                    label: 'Sessions',
+                    data: [22, 8, 3, 19, 12],
+                    backgroundColor: [
+                        '#f56565',
+                        '#fd9e9e',
+                        '#ed8936',
+                        '#68d391',
+                        '#48bb78'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Sessions'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
